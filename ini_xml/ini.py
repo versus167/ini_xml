@@ -5,7 +5,7 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
-tEst
+
 20.05.2014 ms + Funktion check_name überprüft nun die Bezeichnungen
 11.05.2014 vs + Dicts werden jetzt auch unterstützt
 10.05.2014 vs + Das Schreiben von tuplen scheint schonmal soweit zu gehen (auch verschachtelte tuple)
