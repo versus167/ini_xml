@@ -20,12 +20,12 @@ todo:
 __check_name(...) weiter ausbauen
 
 '''
-import xml.etree.ElementTree as ET
-import sys
-import types 
 import os
+import sys
+import types
+import xml.etree.ElementTree as ET
 
-    
+
 class ini(object):
     '''
     Soll sich um die Speicherung von diversen Ini-Einstellungen
@@ -224,7 +224,7 @@ def main(argv):
     print test.get_ini('dicttest')
     print test.get_ini('nichtvorhanden')
     aa = {}
-    aa['t%est1'] = 102
+    aa['test1'] = 102
     aa['test2'] = 'jslkd'
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
