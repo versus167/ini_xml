@@ -171,6 +171,9 @@ class ini(object):
         self.variablen[bezeichnung] = variable
         self.__save__()
     
+    def rename_ini(self):
+        ''' Platzhalter für Funktion '''
+        return
     def __make_element(self,bezeichnung, variable):
         '''
         Fügt dem Parent als neues Element die Variable hinzu
