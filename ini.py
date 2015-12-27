@@ -22,7 +22,7 @@ __check_name(...) weiter ausbauen
 '''
 import os
 import sys
-import types
+#import types
 import xml.etree.ElementTree as ET
 
 
@@ -43,13 +43,13 @@ class ini(object):
         
         # Hier die unterstützten Datentypen
         
-        self.typen[str(types.IntType)] = int
-        self.typen[str(types.FloatType)] = float
-        self.typen[str(types.StringType)] = str
-        self.typen[str(types.UnicodeType)] = unicode
-        self.typen[str(types.BooleanType)] = self.__str2boolean__
-        self.typen[str(types.TupleType)] = ''
-        self.typen[str(types.DictionaryType)] = ''
+        self.typen[str(int)] = int
+        self.typen[str(float)] = float
+        self.typen[str(str)] = str
+        #self.typen[str(trnicode)] = unicode
+        self.typen[str(bool)] = self.__str2boolean__
+        self.typen[str(tuple)] = ''
+        self.typen[str(dict)] = ''
  
         # bis hierher
         
@@ -70,7 +70,7 @@ class ini(object):
 #            try:
             name = i.tag
             typ1 = i.attrib['Type']
-            if typ1 == str(types.TupleType) or typ1 == str(types.DictionaryType):
+            if typ1 == str(tuple) or typ1 == str(dict):
                 # Hier also tuple/dict und damit Spezialbehandlung
                 value = self.__tupledict__(i,typ1)
             else:
@@ -94,27 +94,27 @@ class ini(object):
         '''
         Behandelt die Tuple/Dicts beim Einlesen
         '''
-        if typ == str(types.TupleType):
+        if typ == str(tuple):
             value = []
-        elif typ == str(types.DictionaryType):
+        elif typ == str(dict):
             value = {}
         else:
             raise TypeError
         for i in list(werte):
             typ1 = i.attrib['Type']
-            if typ1 == str(types.TupleType) or typ1 == str(types.DictionaryType):
+            if typ1 == str(tuple) or typ1 == str(dict):
                 # Hier also tuple und damit Spezialbehandlung
-                if typ == str(types.TupleType):
+                if typ == str(tuple):
                     value.append(self.__tupledict__(i,typ1))
-                elif typ == str(types.DictionaryType):
+                elif typ == str(dict):
                     value[i.tag] = self.__tupledict__(i,typ1)
                 else:
                     raise TypeError
             else:
-                if typ == str(types.TupleType):
+                if typ == str(tuple):
                     #Hier also tuple und damit Spezialbehandlung
                     value.append(self.typen[typ1](i.attrib['Value']))
-                elif typ == str(types.DictionaryType):
+                elif typ == str(dict):
                     value[i.tag] = self.typen[typ1](i.attrib['Value'])
         return value
     
@@ -130,7 +130,7 @@ class ini(object):
         '''
         typ1 = str(type(variable))
         
-        if self.typen.has_key(typ1):
+        if typ1 in self.typen:
             return True
         else:
             print("Falscher Datentyp "+typ1)
@@ -180,14 +180,14 @@ class ini(object):
         self.__check_typ(variable)
         iNew.set('Type', str(type(variable)))
         
-        if type(variable) == types.TupleType:
+        if type(variable) == tuple:
             zae = 0
             for i in variable:
                 el = self.__make_element('t'+str(zae), i)
                 iNew.append(el)
                 zae = zae + 1
         else:
-            if type(variable) == types.DictionaryType:
+            if type(variable) == dict:
                 ''' Dann also ein Dict - auch das ein Spezialfall '''
                 for i,j in variable.items():
                     el = self.__make_element(i, j)
@@ -218,11 +218,11 @@ class ini(object):
 
 def main(argv):
     test = ini('test')
-    print test.get_all()
-    print "Test = ",test.get_ini('Test')
-    print test.get_ini('Boolscher')
-    print test.get_ini('dicttest')
-    print test.get_ini('nichtvorhanden')
+    print(test.get_all())
+    print("Test = ",test.get_ini('Test'))
+    print(test.get_ini('Boolscher'))
+    print(test.get_ini('dicttest'))
+    print(test.get_ini('nichtvorhanden'))
     aa = {}
     aa['test1'] = 102
     aa['test2'] = 'jslkd'
@@ -232,8 +232,8 @@ def main(argv):
     test.add_ini("Test3", "Test")
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
-    print test.variablen
-    print "Durch"
+    print(test.variablen)
+    print("Durch")
     del test
     return 0;
 # run the main if we're not being imported:
