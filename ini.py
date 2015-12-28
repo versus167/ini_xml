@@ -22,7 +22,7 @@ __check_name(...) weiter ausbauen
 '''
 import os
 import sys
-#import types
+#import types # in Python3 nicht mehr nötig - für Kompatibilität muss das irgendwie umschifft werden
 import xml.etree.ElementTree as ET
 
 
@@ -220,6 +220,8 @@ class ini(object):
             return None
 
 def main(argv):
+    import sys
+    print(sys.version)
     test = ini('test')
     print(test.get_all())
     print("Test = ",test.get_ini('Test'))
