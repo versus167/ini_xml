@@ -5,6 +5,8 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
+28.12.2015 vs + jetzt kompatibel mit Python 2 und 3. Auch die xml kann mit beiden Versionen gelesen und geschrieben werden
+                Einziges Problem könnten unicode-String aus Python 3 sein, wenn diese in Python 2 gelesen werden sollen 
 27.12.2015 vs + Python 3#fähiger Branch
 20.05.2014 ms + Funktion check_name überprüft nun die Bezeichnungen
 11.05.2014 vs + Dicts werden jetzt auch unterstützt
@@ -41,7 +43,7 @@ class ini(object):
         self.cwd = os.getcwd()
         self.typen = {}
         self.pythonv = sys.version_info[0]
-        print(self.pythonv)
+        #print(self.pythonv)
         # Hier die unterstützten Datentypen
         
         self.typen[self.__py2_3(str(int))] = int
