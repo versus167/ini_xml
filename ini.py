@@ -40,16 +40,18 @@ class ini(object):
         '''
         self.cwd = os.getcwd()
         self.typen = {}
-        
+        self.pythonv = sys.version_info[0]
+        print(self.pythonv)
         # Hier die unterstützten Datentypen
         
-        self.typen[str(int)] = int
-        self.typen[str(float)] = float
-        self.typen[str(str)] = str
-        #self.typen[str(trnicode)] = unicode
-        self.typen[str(bool)] = self.__str2boolean__
-        self.typen[str(tuple)] = ''
-        self.typen[str(dict)] = ''
+        self.typen[self.__py2_3(str(int))] = int
+        self.typen[self.__py2_3(str(float))] = float
+        self.typen[self.__py2_3(str(str))] = str
+        if self.pythonv == 2:
+            self.typen[self.__py2_3(str(unicode))] = unicode
+        self.typen[self.__py2_3(str(bool))] = self.__str2boolean
+        self.typen[self.__py2_3(str(tuple))] = ''
+        self.typen[self.__py2_3(str(dict))] = ''
  
         # bis hierher
         
@@ -70,44 +72,61 @@ class ini(object):
 #            try:
             name = i.tag
             typ1 = i.attrib['Type']
-            if typ1 == str(tuple) or typ1 == str(dict):
+            typp = self.__py2_3(typ1)
+            if typp == self.__py2_3(str(tuple)) or typp == self.__py2_3(str(dict)):
                 # Hier also tuple/dict und damit Spezialbehandlung
-                value = self.__tupledict__(i,typ1)
+                value = self.__tupledict(i,typp)
             else:
-                value = self.typen[typ1](i.attrib['Value'])
+                value = self.typen[typp](i.attrib['Value'])
 #             except:
 #                 print("Unbekannter Variablentyp oder was auch immer")
 
             self.variablen[name] = value
+    def __py2_3(self,name):
+        ''' Setzt die Bezeichnung von Variablentypen in die entsprechende Python-Version um
+            Python 2 -> type ...
+            Python 3 -> class ...
             
-    def __save__(self):
+            Besonderheit bei Python 3 -> Unicode gibt es nicht mehr -> Jetzt alles string.
+            Das könnte im Zweifel bei der Verwendung einer Python3 ini.xml in Python2 Probleme machen.
+            Sollte aber nicht der Standardfall sein
+            '''
+        if self.pythonv == 2:
+            out = name.replace('class','type')
+        else:
+            if name == "<type 'unicode'>":
+                out = str(str)
+            else:
+                out = name.replace('type','class')
+        return out        
+    def __save(self):
         
         fpath = os.path.join(self.cwd,self.fn)
         self.tree.write(fpath)
     
-    def __str2boolean__(self,wert):
+    def __str2boolean(self,wert):
             if wert == 'True':
                 return True
             else:
                 return False
-    def __tupledict__(self,werte,typ):
+    def __tupledict(self,werte,typ):
         '''
         Behandelt die Tuple/Dicts beim Einlesen
         '''
-        if typ == str(tuple):
+        if typ == self.__py2_3(str(tuple)):
             value = []
-        elif typ == str(dict):
+        elif typ == self.__py2_3(str(dict)):
             value = {}
         else:
             raise TypeError
         for i in list(werte):
-            typ1 = i.attrib['Type']
+            typ1 = self.__py2_3(i.attrib['Type'])
             if typ1 == str(tuple) or typ1 == str(dict):
                 # Hier also tuple und damit Spezialbehandlung
                 if typ == str(tuple):
-                    value.append(self.__tupledict__(i,typ1))
+                    value.append(self.__tupledict(i,typ1))
                 elif typ == str(dict):
-                    value[i.tag] = self.__tupledict__(i,typ1)
+                    value[i.tag] = self.__tupledict(i,typ1)
                 else:
                     raise TypeError
             else:
@@ -122,7 +141,7 @@ class ini(object):
         ''' Löscht die gewählte Variable '''
         t1 = self.root.find(bezeichnung)
         self.root.remove(t1)
-        self.__save__()
+        self.__save()
         
     def __check_typ(self,variable):
         '''
@@ -169,7 +188,7 @@ class ini(object):
         
         self.root.append(el)
         self.variablen[bezeichnung] = variable
-        self.__save__()
+        self.__save()
     
     def rename_ini(self):
         ''' Platzhalter für Funktion '''
@@ -234,7 +253,7 @@ def main(argv):
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
     test.add_ini("Boolscher", True)
-    test.add_ini("Test3", "Test")
+    test.add_ini("Test3", u"Test")
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
     print(test.variablen)
