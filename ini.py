@@ -54,7 +54,7 @@ class ini(object):
         self.typen[self.__py2_3(str(bool))] = self.__str2boolean
         self.typen[self.__py2_3(str(tuple))] = ''
         self.typen[self.__py2_3(str(dict))] = ''
-        self.typen[self]
+        self.typen[self.__py2_3(str(list))] = ''
  
         # bis hierher
         
@@ -76,7 +76,7 @@ class ini(object):
             name = i.tag
             typ1 = i.attrib['Type']
             typp = self.__py2_3(typ1)
-            if typp == self.__py2_3(str(tuple)) or typp == self.__py2_3(str(dict)):
+            if typp == self.__py2_3(str(tuple)) or typp == self.__py2_3(str(dict)) or typp == self.__py2_3(str(list)):
                 # Hier also tuple/dict und damit Spezialbehandlung
                 value = self.__tupledict(i,typp)
             else:
@@ -116,7 +116,7 @@ class ini(object):
         '''
         Behandelt die Tuple/Dicts beim Einlesen
         '''
-        if typ == self.__py2_3(str(tuple)):
+        if typ == self.__py2_3(str(tuple)) or typ == self.__py2_3(str(list)) :
             value = []
         elif typ == self.__py2_3(str(dict)):
             value = {}
@@ -250,6 +250,7 @@ def main(argv):
     print(test.get_ini('Boolscher'))
     print(test.get_ini('dicttest'))
     print(test.get_ini('nichtvorhanden'))
+    print(test.get_ini('Liste'))
     bb = []
     bb.append('list1')
     bb.append('list2')
