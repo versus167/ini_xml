@@ -54,6 +54,7 @@ class ini(object):
         self.typen[self.__py2_3(str(bool))] = self.__str2boolean
         self.typen[self.__py2_3(str(tuple))] = ''
         self.typen[self.__py2_3(str(dict))] = ''
+        self.typen[self]
  
         # bis hierher
         
@@ -249,6 +250,10 @@ def main(argv):
     print(test.get_ini('Boolscher'))
     print(test.get_ini('dicttest'))
     print(test.get_ini('nichtvorhanden'))
+    bb = []
+    bb.append('list1')
+    bb.append('list2')
+    test.add_ini('Liste', bb)
     aa = {}
     aa['test1'] = 102
     aa['test2'] = 'jslkd'
