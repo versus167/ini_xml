@@ -124,16 +124,16 @@ class ini(object):
             raise TypeError
         for i in list(werte):
             typ1 = self.__py2_3(i.attrib['Type'])
-            if typ1 == str(tuple) or typ1 == str(dict):
+            if typ1 == str(tuple) or typ1 == str(dict) or typ1 == str(list):
                 # Hier also tuple und damit Spezialbehandlung
-                if typ == str(tuple):
+                if typ == str(tuple) or typ == str(list):
                     value.append(self.__tupledict(i,typ1))
                 elif typ == str(dict):
                     value[i.tag] = self.__tupledict(i,typ1)
                 else:
                     raise TypeError
             else:
-                if typ == str(tuple):
+                if typ == str(tuple) or typ == str(list):
                     #Hier also tuple und damit Spezialbehandlung
                     value.append(self.typen[typ1](i.attrib['Value']))
                 elif typ == str(dict):
