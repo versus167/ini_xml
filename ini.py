@@ -5,6 +5,7 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
+14.01.2016 vs + Als Variablentyp auch eine list zulassen
 28.12.2015 vs + jetzt kompatibel mit Python 2 und 3. Auch die xml kann mit beiden Versionen gelesen und geschrieben werden
                 Einziges Problem könnten unicode-String aus Python 3 sein, wenn diese in Python 2 gelesen werden sollen 
 27.12.2015 vs + Python 3#fähiger Branch
@@ -205,7 +206,7 @@ class ini(object):
         self.__check_typ(variable)
         iNew.set('Type', str(type(variable)))
         
-        if type(variable) == tuple:
+        if type(variable) == tuple or type(variable) == list:
             zae = 0
             for i in variable:
                 el = self.__make_element('t'+str(zae), i)
@@ -247,10 +248,13 @@ def main(argv):
     test = ini('test')
     print(test.get_all())
     print("Test = ",test.get_ini('Test'))
+    print(type(test.get_ini('Test')))
     print(test.get_ini('Boolscher'))
     print(test.get_ini('dicttest'))
+    print(type(test.get_ini('dicttest')))
     print(test.get_ini('nichtvorhanden'))
-    print(test.get_ini('Liste'))
+    cc = test.get_ini('Liste')
+    print(type(cc))
     bb = []
     bb.append('list1')
     bb.append('list2')
