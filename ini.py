@@ -5,6 +5,7 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
+20.01.2016 vs + Pfad als Option ermöglichen - Damit Speicherung an beliebigem Ort ohne das Working-Directory zu verlassen
 14.01.2016 vs + Als Variablentyp auch eine list zulassen
 28.12.2015 vs + jetzt kompatibel mit Python 2 und 3. Auch die xml kann mit beiden Versionen gelesen und geschrieben werden
                 Einziges Problem könnten unicode-String aus Python 3 sein, wenn diese in Python 2 gelesen werden sollen 
@@ -20,7 +21,8 @@ Created on 15.12.2013
 03.01.2014 ms + Dateiname der xml kann festgelegt werden
 
 todo:
-__check_name(...) weiter ausbauen
+* __check_name(...) weiter ausbauen
+* Dict korrekt unterstützen
 
 '''
 import os
@@ -36,12 +38,15 @@ class ini(object):
     '''
 
     
-    def __init__(self, fn='ini', must_exist=False):
+    def __init__(self, fn='ini', must_exist=False,path=None):
         '''
         Versucht das (fn).xml File im aktuellen Pfad zu lesen. Falls es nicht gelingt ->
         auch nicht so schlimm ;)
         '''
-        self.cwd = os.getcwd()
+        if path==None:
+            self.cwd = os.getcwd()
+        else:
+            self.cwd = path
         self.typen = {}
         self.pythonv = sys.version_info[0]
         #print(self.pythonv)
@@ -61,8 +66,9 @@ class ini(object):
         
         self.fn = fn+'.xml'
         self.fn = self.fn.replace("/"," ")
+        self.filepath = os.path.join(self.cwd,self.fn)
         try:
-            self.tree = ET.parse(self.fn)
+            self.tree = ET.parse(self.filepath)
         except:# muss genauer werden! (welche genaue exception soll abgefangen werden?)
             if must_exist == False:
                 self.root = ET.Element('Variablen')
@@ -105,8 +111,8 @@ class ini(object):
         return out        
     def __save(self):
         
-        fpath = os.path.join(self.cwd,self.fn)
-        self.tree.write(fpath)
+        #fpath = os.path.join(self.cwd,self.fn)
+        self.tree.write(self.filepath)
     
     def __str2boolean(self,wert):
             if wert == 'True':
@@ -245,6 +251,7 @@ class ini(object):
 def main(argv):
     import sys
     print(sys.version)
+    #pfad = os.path.expanduser('~')
     test = ini('test')
     print(test.get_all())
     print("Test = ",test.get_ini('Test'))
