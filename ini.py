@@ -161,6 +161,7 @@ class ini(object):
             return False
     
     def __check_name(self,name):
+        name = str(name)
         for zeichen in "*/&%$<>":
             if zeichen in name:
                 raise NameError("Achtung: "+name+" aber */&%$<> sind nicht erlaubt")
@@ -260,11 +261,11 @@ def main(argv):
     bb.append('list2')
     test.add_ini('Liste', bb)
     aa = {}
-    aa['test1'] = 102
+    aa['t100'] = 102
     aa['test2'] = 'jslkd'
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
-    test.add_ini("Boolscher", True)
+    test.add_ini("Boolscher", False)
     test.add_ini("Test3", u"Test")
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
