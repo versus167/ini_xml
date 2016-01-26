@@ -26,6 +26,7 @@ todo:
 
 '''
 import os
+import re
 import sys
 #import types # in Python3 nicht mehr nötig - für Kompatibilität muss das irgendwie umschifft werden
 import xml.etree.ElementTree as ET
@@ -166,10 +167,11 @@ class ini(object):
             raise TypeError
             return False
     
-    def __check_name(self,name):
-        for zeichen in "*/&%$<>":
-            if zeichen in name:
-                raise NameError("Achtung: "+name+" aber */&%$<> sind nicht erlaubt")
+    def __check_name(self, name):
+        erlaubtes_muster = r"[a-zA-Z]+[a-zA-Z0-9_.-]*$"
+        match = re.match(erlaubtes_muster, name)
+        if match == None or match.group(0) != name:
+            raise NameError("Die Bezeichnung soll mit einem Buchstaben beginnen und darf dann nur noch Buchstaben, Ziffern, Unterstriche, Punkte und Minusse beinhalten: " + name)
         return 0
     
     def add_ini(self,bezeichnung,variable):
@@ -275,6 +277,10 @@ def main(argv):
     test.add_ini("Test3", u"Test")
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
+    #test.add_ini("geht_nicht&", 1)# enthält nicht erlaubtes Sonderzeichen
+    #test.add_ini("5geht_nicht", 2)# beginnt mit Ziffer statt Buchstabe
+    #test.add_ini("geht_\t_nicht", 3)# hat Whitespace im Namen
+    #test.add_ini("geht_nicht\n", 4)# hat einen Zeilenumbruch im Namen
     print(test.variablen)
     print("Durch")
     del test
