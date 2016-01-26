@@ -12,7 +12,7 @@ Created on 15.12.2013
 27.12.2015 vs + Python 3#fähiger Branch
 20.05.2014 ms + Funktion check_name überprüft nun die Bezeichnungen
 11.05.2014 vs + Dicts werden jetzt auch unterstützt
-10.05.2014 vs + Das Schreiben von tuplen scheint schonmal soweit zu gehen (auch verschachtelte tuple)
+10.05.2014 vs + Das Schreiben von Tupeln scheint schonmal soweit zu gehen (auch verschachtelte Tupel)
 06.05.2014 ms + get_all - Liefert das Dict mit allen Variablen (Alternative ist der direkte Zugriff -> ini.variablen)
 06.05.2014 ms + Test Variablennamen auf ungültige Zeichen
 06.05.2014 ms + must_exist - Erstellt kein neues XML
