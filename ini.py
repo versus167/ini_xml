@@ -5,7 +5,7 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
-
+nur test
 20.01.2016 vs + Pfad als Option ermöglichen - Damit Speicherung an beliebigem Ort ohne das Working-Directory zu verlassen
 14.01.2016 vs + Als Variablentyp auch eine list zulassen
 28.12.2015 vs + jetzt kompatibel mit Python 2 und 3. Auch die xml kann mit beiden Versionen gelesen und geschrieben werden
