@@ -123,7 +123,7 @@ class ini(object):
                 return False
     def __tupledict(self,werte,typ):
         '''
-        Behandelt die Tuple/Dicts beim Einlesen
+        Behandelt die Tuple/Dicts/List beim Einlesen
         '''
         if typ == self.__py2_3(str(tuple)) or typ == self.__py2_3(str(list)) :
             value = []
@@ -224,6 +224,10 @@ class ini(object):
         else:
             if type(variable) == dict:
                 ''' Dann also ein Dict - auch das ein Spezialfall '''
+                u''' Mir schwebt in etwa vor:
+                Das Dict wird im Grunde wie eine Liste con key, value gespeichert. Die einzelnen Keys
+                müssen dazu (ähnlich wie bei List oben) mit 'k0','k1' usw. bezeichnet werden
+                '''
                 for i,j in variable.items():
                     el = self.__make_element(i, j)
                     iNew.append(el)
