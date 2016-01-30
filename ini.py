@@ -5,7 +5,8 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
-
+30.01.2016 vs + Dict werden jetzt korrekt unterstützt - Mögliche Inkompatibilität mit alten Versionen?!
+26.01.2016 ms + CheckName-Funktion sauber definiert und Entsprechende Meldung eingebaut
 20.01.2016 vs + Pfad als Option ermöglichen - Damit Speicherung an beliebigem Ort ohne das Working-Directory zu verlassen
 14.01.2016 vs + Als Variablentyp auch eine list zulassen
 28.12.2015 vs + jetzt kompatibel mit Python 2 und 3. Auch die xml kann mit beiden Versionen gelesen und geschrieben werden
@@ -23,7 +24,6 @@ Created on 15.12.2013
 
 todo:
 
-* Dict korrekt unterstützen
 
 '''
 import os
@@ -138,7 +138,8 @@ class ini(object):
                 if typ == str(tuple) or typ == str(list):
                     value.append(self.__tupledict(i,typ1))
                 elif typ == str(dict):
-                    value[i.tag] = self.__tupledict(i,typ1)
+                    tmp = self.__tupledict(i, typ1) # Typ1 sollte an der Stelle immer Tuple sein!
+                    value[tmp[0]] = tmp[1]
                 else:
                     raise TypeError
             else:
@@ -146,7 +147,8 @@ class ini(object):
                     #Hier also tuple und damit Spezialbehandlung
                     value.append(self.typen[typ1](i.attrib['Value']))
                 elif typ == str(dict):
-                    value[i.tag] = self.typen[typ1](i.attrib['Value'])
+                    raise TypeError # Hier sollten wir korrekterweise nicht mehr rauskommen
+                    #value[i.tag] = self.typen[typ1](i.attrib['Value']) # Noch korrekt?!
         return value
     
     def del_ini(self,bezeichnung):
@@ -225,12 +227,15 @@ class ini(object):
             if type(variable) == dict:
                 ''' Dann also ein Dict - auch das ein Spezialfall '''
                 u''' Mir schwebt in etwa vor:
-                Das Dict wird im Grunde wie eine Liste con key, value gespeichert. Die einzelnen Keys
+                Das Dict wird im Grunde wie eine Liste von key, value gespeichert. Die einzelnen Keys
                 müssen dazu (ähnlich wie bei List oben) mit 'k0','k1' usw. bezeichnet werden
                 '''
+                zae = 0
                 for i,j in variable.items():
-                    el = self.__make_element(i, j)
+                    
+                    el = self.__make_element('k'+str(zae),(i, j))
                     iNew.append(el)
+                    zae += 1
             else:
                 iNew.set('Value',str(variable))
         return iNew
@@ -246,10 +251,10 @@ class ini(object):
         return ergebnis
     
     def get_all(self):
-        '''Gibt einfach ein dictionary mit allen
-        Variablen und ihren Werten zur�ck. Falls
+        u'''Gibt einfach ein dictionary mit allen
+        Variablen und ihren Werten zurück. Falls
         keine Variablen gespeichert sind wird None
-        zur�ckgegeben.'''
+        zurückgegeben.'''
         if self.variablen != {}:
             return self.variablen
         else:
@@ -274,7 +279,7 @@ def main(argv):
     bb.append('list2')
     test.add_ini('Liste', bb)
     aa = {}
-    aa['t100'] = 102
+    aa[100] = 102
     aa['test2'] = 'jslkd'
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
