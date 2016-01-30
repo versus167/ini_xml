@@ -150,6 +150,8 @@ class ini(object):
                     u''' Hier sollten wir korrekterweise nicht mehr rauskommen, aber für Kompatibilität mit
                          der alten Version bleibt die alte Variante aktiv '''
                     value[i.tag] = self.typen[typ1](i.attrib['Value'])
+        if typ == str(tuple):
+            value = tuple(value)
         return value
     
     def del_ini(self,bezeichnung):
@@ -266,15 +268,9 @@ def main(argv):
     print(sys.version)
     #pfad = os.path.expanduser('~')
     test = ini('test')
-    #print(test.get_all())
-    print("Test = ",test.get_ini('Test'))
-    #print(type(test.get_ini('Test')))
-    print('Boolscher = ',test.get_ini('Boolscher'))
-    print('Dicttest = ',test.get_ini('dicttest'))
-    #print(type(test.get_ini('dicttest')))
+    for i in test.get_all().items():
+        print(type(i[1]),i)
     print('Nicht vorhandene Variable abfragen = ',test.get_ini('nichtvorhanden'))
-    cc = test.get_ini('Liste')
-    print('Liste =',cc)
     bb = []
     bb.append('list1')
     bb.append('list2')
@@ -292,7 +288,8 @@ def main(argv):
     #test.add_ini("5geht_nicht", 2)# beginnt mit Ziffer statt Buchstabe
     #test.add_ini("geht_\t_nicht", 3)# hat Whitespace im Namen
     #test.add_ini("geht_nicht\n", 4)# hat einen Zeilenumbruch im Namen
-    print(test.variablen)
+    for i in test.get_all().items():
+        print(type(i[1]),i)
     print("Durch")
     del test
     return 0;
