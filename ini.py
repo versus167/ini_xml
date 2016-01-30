@@ -147,8 +147,9 @@ class ini(object):
                     #Hier also tuple und damit Spezialbehandlung
                     value.append(self.typen[typ1](i.attrib['Value']))
                 elif typ == str(dict):
-                    raise TypeError # Hier sollten wir korrekterweise nicht mehr rauskommen
-                    #value[i.tag] = self.typen[typ1](i.attrib['Value']) # Noch korrekt?!
+                    u''' Hier sollten wir korrekterweise nicht mehr rauskommen, aber für Kompatibilität mit
+                         der alten Version bleibt die alte Variante aktiv '''
+                    value[i.tag] = self.typen[typ1](i.attrib['Value'])
         return value
     
     def del_ini(self,bezeichnung):
@@ -265,15 +266,15 @@ def main(argv):
     print(sys.version)
     #pfad = os.path.expanduser('~')
     test = ini('test')
-    print(test.get_all())
+    #print(test.get_all())
     print("Test = ",test.get_ini('Test'))
-    print(type(test.get_ini('Test')))
-    print(test.get_ini('Boolscher'))
-    print(test.get_ini('dicttest'))
-    print(type(test.get_ini('dicttest')))
-    print(test.get_ini('nichtvorhanden'))
+    #print(type(test.get_ini('Test')))
+    print('Boolscher = ',test.get_ini('Boolscher'))
+    print('Dicttest = ',test.get_ini('dicttest'))
+    #print(type(test.get_ini('dicttest')))
+    print('Nicht vorhandene Variable abfragen = ',test.get_ini('nichtvorhanden'))
     cc = test.get_ini('Liste')
-    print(type(cc))
+    print('Liste =',cc)
     bb = []
     bb.append('list1')
     bb.append('list2')
