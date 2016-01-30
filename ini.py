@@ -5,7 +5,9 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
-30.01.2016 vs + Dict werden jetzt korrekt unterstützt - Mögliche Inkompatibilität mit alten Versionen?!
+30.01.2016 vs + Dict werden jetzt korrekt unterstützt. XML aus alten Versionen (bis 1.2.0 )sind mit den neuen Versionen kompatibel.
+                Alte Versionen sind mit neuen XML aus Versionen < 1.2.0 in denen ein dict geschrieben wurde nicht mehr kompatibel.
+                Tuple werden jetzt auch als Tuple wiederhergestellt aus der XML. 
 26.01.2016 ms + CheckName-Funktion sauber definiert und Entsprechende Meldung eingebaut
 20.01.2016 vs + Pfad als Option ermöglichen - Damit Speicherung an beliebigem Ort ohne das Working-Directory zu verlassen
 14.01.2016 vs + Als Variablentyp auch eine list zulassen
