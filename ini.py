@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #! coding: utf-8
-'''
+u'''
 Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
@@ -242,7 +242,7 @@ class ini(object):
                     iNew.append(el)
                     zae += 1
             else:
-                iNew.set('Value',str(variable))
+                iNew.set('Value',repr(variable))
         return iNew
         
     
@@ -280,10 +280,11 @@ def main(argv):
     aa = {}
     aa[100] = 102
     aa['test2'] = 'jslkd'
+    #aa[u'ola'] = u'Müller'
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
     test.add_ini("Boolscher", False)
-    test.add_ini("Test3", u"Test")
+    test.add_ini("Test3", u"Müller")
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
     #test.add_ini("geht_nicht&", 1)# enthält nicht erlaubtes Sonderzeichen
