@@ -5,6 +5,7 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
+12.03.2016 vs + Quasi rewrite, da ab jetzt repr() und eval() verwendet werden sollen
 30.01.2016 vs + Dict werden jetzt korrekt unterstützt. XML aus alten Versionen (bis 1.2.0 )sind mit den neuen Versionen kompatibel.
                 Alte Versionen sind mit neuen XML aus Versionen < 1.2.0 in denen ein dict geschrieben wurde nicht mehr kompatibel.
                 Tuple werden jetzt auch als Tuple wiederhergestellt aus der XML. 
@@ -35,7 +36,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 
-class ini(object):
+class ini_v121(object):
     '''
     Soll sich um die Speicherung von diversen Ini-Einstellungen
     kümmern. Permanente Speicherung in einem XML-File  
@@ -47,10 +48,7 @@ class ini(object):
         Versucht das (fn).xml File im aktuellen Pfad zu lesen. Falls es nicht gelingt ->
         auch nicht so schlimm ;)
         '''
-        if path==None:
-            self.cwd = os.getcwd()
-        else:
-            self.cwd = path
+        self.__init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
         self.typen = {}
         self.pythonv = sys.version_info[0]
         #print(self.pythonv)
@@ -68,9 +66,7 @@ class ini(object):
  
         # bis hierher
         
-        self.fn = fn+'.xml'
-        self.fn = self.fn.replace("/"," ")
-        self.filepath = os.path.join(self.cwd,self.fn)
+        
         try:
             self.tree = ET.parse(self.filepath)
         except:# muss genauer werden! (welche genaue exception soll abgefangen werden?)
@@ -96,6 +92,18 @@ class ini(object):
 #                 print("Unbekannter Variablentyp oder was auch immer")
 
             self.variablen[name] = value
+    
+    def __init_allgemein(self,fn='ini', must_exist=False,path=None):
+        u'''
+        Ein paar Teile der Init-Funktion, die auch in der neuen Version angewendet werden
+        '''
+        if path==None:
+            self.cwd = os.getcwd()
+        else:
+            self.cwd = path 
+        self.fn = fn+'.xml'
+        self.fn = self.fn.replace("/"," ")
+        self.filepath = os.path.join(self.cwd,self.fn)
     def __py2_3(self,name):
         ''' Setzt die Bezeichnung von Variablentypen in die entsprechende Python-Version um
             Python 2 -> type ...
@@ -264,6 +272,9 @@ class ini(object):
             return self.variablen
         else:
             return None
+
+#class ini(ini):
+    
 
 def main(argv):
     import sys
