@@ -341,7 +341,7 @@ def main(argv):
     import sys
     print(sys.version)
     #pfad = os.path.expanduser('~')
-    test = ini('test2')
+    test = ini('test')
     try:
         for i in test.get_all().items():
             print(type(i[1]),i)
