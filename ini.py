@@ -250,7 +250,7 @@ class ini_v121(object):
                     iNew.append(el)
                     zae += 1
             else:
-                iNew.set('Value',repr(variable))
+                iNew.set('Value',str(variable))
         return iNew
         
     
@@ -285,16 +285,27 @@ class ini(ini_v121):
     def __init__(self, fn='ini', must_exist=False,path=None):
         self._init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
         # Jetzt ist zu checken, ob das übergeben xml aus der alten Version stammt
+        self.variablen = {} # Hier sind alle Objekte in einem Dict gespeichert
         try:
             self.tree = ET.parse(self.filepath)
             # File existiert also -> Jetzt check ob Version >=200 oder ob überhaupt Version
-            root = self.tree.getroot()
-            if root.tag == 'ini_xml': # Dann sollte auch eine Version geschlüsselt sein
-                version = root.find('Version')
-                print(version)
+            trueroot = self.tree.getroot()
+            if trueroot.tag == 'ini_xml': # Dann sollte auch eine Version geschlüsselt sein
+                v = trueroot.find('Version')
+                version = v.find('Version')
+                vers = eval(version.attrib['Value'])
+                if vers >= 200:
+                    # Aktuelle Version - Einlesen der Variablen
+                    self.root = trueroot.find('Variablen')
+                    
+                    for i in list(self.root):
+                        name = i.tag
+                        value = i.attrib['Value']
+                        self.variablen[name] = eval(value) # Wieder in Originalobjekt umsetzen
+                    
+                    
             
-            for i in root:
-                print(i)
+            
             
         except:# muss genauer werden! (welche genaue exception soll abgefangen werden?)
             if must_exist == False:
@@ -307,7 +318,7 @@ class ini(ini_v121):
                 self.tree = ET.ElementTree(self.trueroot)
             else:
                 raise
-        self.variaben = {} # Hier sind alle Objekte in einem Dict gespeichert
+        
     
     def _make_element(self, bezeichnung, variable):
         u'''
@@ -315,15 +326,19 @@ class ini(ini_v121):
         '''
         self._check_name(bezeichnung) # erstmal prüfen ob alles im grünen Bereich, was den Namen angeht
         iNew = ET.Element(bezeichnung)
-        
-        return ini_v121._make_element(self, bezeichnung, variable)
+        iNew.set('Value',repr(variable))
+        return iNew
 def main(argv):
     import sys
     print(sys.version)
     #pfad = os.path.expanduser('~')
     test = ini('testv2')
-    for i in test.get_all().items():
-        print(type(i[1]),i)
+    try:
+        for i in test.get_all().items():
+            print(type(i[1]),i)
+            print(test.get_ini(i[0]))
+    except:
+        pass
     print('Nicht vorhandene Variable abfragen = ',test.get_ini('nichtvorhanden'))
     bb = []
     bb.append('list1')
@@ -332,11 +347,12 @@ def main(argv):
     aa = {}
     aa[100] = 102
     aa['test2'] = 'jslkd'
-    #aa[u'ola'] = u'Müller'
+    aa[u'olaä'] = u'Müller'
     test.add_ini('dicttest',aa)
     test.add_ini("Test2",19.0)
     test.add_ini("Boolscher", False)
     test.add_ini("Test3", u"Müller")
+    print(u'Müller')
     test.add_ini('Test',(20,(12,20,aa)))
     #test.del_ini('Test3')
     #test.add_ini("geht_nicht&", 1)# enthält nicht erlaubtes Sonderzeichen
@@ -344,7 +360,8 @@ def main(argv):
     #test.add_ini("geht_\t_nicht", 3)# hat Whitespace im Namen
     #test.add_ini("geht_nicht\n", 4)# hat einen Zeilenumbruch im Namen
     for i in test.get_all().items():
-        print(type(i[1]),i)
+        print(type(i[1]),i,test.get_ini(i[0]))
+        
     print("Durch")
     del test
     return 0;
