@@ -48,7 +48,7 @@ class ini_v121(object):
         Versucht das (fn).xml File im aktuellen Pfad zu lesen. Falls es nicht gelingt ->
         auch nicht so schlimm ;)
         '''
-        self.__init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
+        self._init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
         self.typen = {}
         self.pythonv = sys.version_info[0]
         #print(self.pythonv)
@@ -93,7 +93,7 @@ class ini_v121(object):
 
             self.variablen[name] = value
     
-    def __init_allgemein(self,fn='ini', must_exist=False,path=None):
+    def _init_allgemein(self,fn='ini', must_exist=False,path=None):
         u'''
         Ein paar Teile der Init-Funktion, die auch in der neuen Version angewendet werden
         '''
@@ -183,7 +183,7 @@ class ini_v121(object):
             raise TypeError
             return False
     
-    def __check_name(self, name):
+    def _check_name(self, name):
         erlaubtes_muster = r"[a-zA-Z]+[a-zA-Z0-9_.-]*$"
         match = re.match(erlaubtes_muster, name)
         if match == None or match.group(0) != name:
@@ -195,7 +195,7 @@ class ini_v121(object):
         Setzt den Wert einer Variable - Eventuell vorhandene Werte werden ersetzt
         '''
         
-        self.__check_name(bezeichnung)
+        self._check_name(bezeichnung)
         
         t1 = self.root.find(bezeichnung) # Löschen einer früheren Version der Variable
         if t1 == None:
@@ -207,7 +207,7 @@ class ini_v121(object):
         rekursiv aufgerufen werden kann. Die endgültige Rückgabe wird dann dem Root
         hinzugefügt.
         '''
-        el = self.__make_element(bezeichnung, variable)
+        el = self._make_element(bezeichnung, variable)
         #iNew = ET.Element(bezeichnung)
         #iNew.set('Type', str(type(variable)))
         
@@ -221,11 +221,11 @@ class ini_v121(object):
     def rename_ini(self):
         ''' Platzhalter für Funktion '''
         return
-    def __make_element(self,bezeichnung, variable):
+    def _make_element(self,bezeichnung, variable):
         '''
         Fügt dem Parent als neues Element die Variable hinzu
         '''
-        self.__check_name(bezeichnung) # erstmal prüfen ob alles im grünen Bereich, was den Namen angeht
+        self._check_name(bezeichnung) # erstmal prüfen ob alles im grünen Bereich, was den Namen angeht
         iNew = ET.Element(bezeichnung)
         self.__check_typ(variable)
         iNew.set('Type', str(type(variable)))
@@ -233,7 +233,7 @@ class ini_v121(object):
         if type(variable) == tuple or type(variable) == list:
             zae = 0
             for i in variable:
-                el = self.__make_element('t'+str(zae), i)
+                el = self._make_element('t'+str(zae), i)
                 iNew.append(el)
                 zae = zae + 1
         else:
@@ -246,7 +246,7 @@ class ini_v121(object):
                 zae = 0
                 for i,j in variable.items():
                     
-                    el = self.__make_element('k'+str(zae),(i, j))
+                    el = self._make_element('k'+str(zae),(i, j))
                     iNew.append(el)
                     zae += 1
             else:
@@ -273,14 +273,55 @@ class ini_v121(object):
         else:
             return None
 
-#class ini(ini):
+class ini(ini_v121):
+    u'''
+    Rewrite mit Verwendung von repr() und eval() für Umwandlung in String und reverse
     
-
+    Neue Versionen der XML-Files werden in der XML durch ein Versions-Tag gekennzeichnet.
+    
+    Damit können auch alte Versionen gelesen werden. Geschrieben werden dann immer neue
+    Versionen.
+    '''
+    def __init__(self, fn='ini', must_exist=False,path=None):
+        self._init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
+        # Jetzt ist zu checken, ob das übergeben xml aus der alten Version stammt
+        try:
+            self.tree = ET.parse(self.filepath)
+            # File existiert also -> Jetzt check ob Version >=200 oder ob überhaupt Version
+            root = self.tree.getroot()
+            if root.tag == 'ini_xml': # Dann sollte auch eine Version geschlüsselt sein
+                version = root.find('Version')
+                print(version)
+            
+            for i in root:
+                print(i)
+            
+        except:# muss genauer werden! (welche genaue exception soll abgefangen werden?)
+            if must_exist == False:
+                self.trueroot = ET.Element('ini_xml')
+                self.root = ET.Element('Variablen')
+                self.version = ET.Element('Version')
+                self.version.append(self._make_element('Version',200)) # 2.0.0
+                self.trueroot.append(self.version)
+                self.trueroot.append(self.root)
+                self.tree = ET.ElementTree(self.trueroot)
+            else:
+                raise
+        self.variaben = {} # Hier sind alle Objekte in einem Dict gespeichert
+    
+    def _make_element(self, bezeichnung, variable):
+        u'''
+        Fügt dem Parent als neues Element die Variable hinzu
+        '''
+        self._check_name(bezeichnung) # erstmal prüfen ob alles im grünen Bereich, was den Namen angeht
+        iNew = ET.Element(bezeichnung)
+        
+        return ini_v121._make_element(self, bezeichnung, variable)
 def main(argv):
     import sys
     print(sys.version)
     #pfad = os.path.expanduser('~')
-    test = ini('test')
+    test = ini('testv2')
     for i in test.get_all().items():
         print(type(i[1]),i)
     print('Nicht vorhandene Variable abfragen = ',test.get_ini('nichtvorhanden'))
