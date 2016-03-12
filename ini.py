@@ -283,6 +283,7 @@ class ini(ini_v121):
     Versionen.
     '''
     def __init__(self, fn='ini', must_exist=False,path=None):
+        self.INI_XML_Version = 200
         self._init_allgemein(fn, must_exist, path) # Hier der allgemeine Teil, der auch in V2 verwendet wird
         # Jetzt ist zu checken, ob das übergeben xml aus der alten Version stammt
         self.variablen = {} # Hier sind alle Objekte in einem Dict gespeichert
@@ -294,7 +295,7 @@ class ini(ini_v121):
                 v = trueroot.find('Version')
                 version = v.find('Version')
                 vers = eval(version.attrib['Value'])
-                if vers >= 200:
+                if vers >= 200: # ab Version 2.0.0 
                     # Aktuelle Version - Einlesen der Variablen
                     self.root = trueroot.find('Variablen')
                     
@@ -303,23 +304,31 @@ class ini(ini_v121):
                         value = i.attrib['Value']
                         self.variablen[name] = eval(value) # Wieder in Originalobjekt umsetzen
                     
-                    
+            else: # Dann also eine alte Version und wir setzen um
+                iniold = ini_v121(fn,must_exist,path)
+                self._create_tree(self.INI_XML_Version)
+                for i in iniold.get_all():
+                    self.add_ini(i[0], i[1])
+                del(iniold)
+                      
             
             
             
         except:# muss genauer werden! (welche genaue exception soll abgefangen werden?)
             if must_exist == False:
-                self.trueroot = ET.Element('ini_xml')
-                self.root = ET.Element('Variablen')
-                self.version = ET.Element('Version')
-                self.version.append(self._make_element('Version',200)) # 2.0.0
-                self.trueroot.append(self.version)
-                self.trueroot.append(self.root)
-                self.tree = ET.ElementTree(self.trueroot)
+                self._create_tree(self.INI_XML_Version)
+                
             else:
                 raise
         
-    
+    def _create_tree(self,version):
+        self.trueroot = ET.Element('ini_xml')
+        self.root = ET.Element('Variablen')
+        self.version = ET.Element('Version')
+        self.version.append(self._make_element('Version',version)) 
+        self.trueroot.append(self.version)
+        self.trueroot.append(self.root)
+        self.tree = ET.ElementTree(self.trueroot)
     def _make_element(self, bezeichnung, variable):
         u'''
         Fügt dem Parent als neues Element die Variable hinzu
@@ -332,7 +341,7 @@ def main(argv):
     import sys
     print(sys.version)
     #pfad = os.path.expanduser('~')
-    test = ini('testv2')
+    test = ini('test2')
     try:
         for i in test.get_all().items():
             print(type(i[1]),i)
