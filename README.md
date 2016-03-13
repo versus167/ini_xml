@@ -13,6 +13,7 @@ Unterschiede zu configparser:
 * Eher nicht auf die händische Editierung der ini-Files ausgelegt 
 
 
-Unterstützte Variablentypen: int, float, str, unicode (Python 2), bool, dict, tuple, list
+Unterstützte Variablentypen: Alle Objekte die mit repr() und eval() sauber in einen String und wieder
+zurück umgewandelt werden können.
 
 Die Verwendung ist in main() dargestellt.
