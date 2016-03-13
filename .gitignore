@@ -2,4 +2,4 @@
 .pydevproject
 .settings/
 *.pyc
-test.xml
+*.xml

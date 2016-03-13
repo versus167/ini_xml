@@ -5,7 +5,10 @@ Created on 15.12.2013
 
 @author: Volker Süß, Marvin Süß
 
-12.03.2016 vs + Quasi rewrite, da ab jetzt repr() und eval() verwendet werden sollen
+12.03.2016 vs + Quasi rewrite, da ab jetzt repr() und eval() verwendet werden - Das Ding liest XML aus den Vorgänger-
+                versionen und wandelt, falls eine Variable neu geschrieben wird, das Format um.
+                Python 2-XML können in Python 3 verwendet werden - umgekehrt kommt es wohl bei Umlauten o.ä.
+                zu Problemen.
 30.01.2016 vs + Dict werden jetzt korrekt unterstützt. XML aus alten Versionen (bis 1.2.0 )sind mit den neuen Versionen kompatibel.
                 Alte Versionen sind mit neuen XML aus Versionen < 1.2.0 in denen ein dict geschrieben wurde nicht mehr kompatibel.
                 Tuple werden jetzt auch als Tuple wiederhergestellt aus der XML. 
@@ -307,7 +310,7 @@ class ini(ini_v121):
             else: # Dann also eine alte Version und wir setzen um
                 iniold = ini_v121(fn,must_exist,path)
                 self._create_tree(self.INI_XML_Version)
-                for i in iniold.get_all():
+                for i in iniold.get_all().items():
                     self.add_ini(i[0], i[1])
                 del(iniold)
                       
@@ -338,10 +341,25 @@ class ini(ini_v121):
         iNew.set('Value',repr(variable))
         return iNew
 def main(argv):
-    import sys
+   
     print(sys.version)
     #pfad = os.path.expanduser('~')
-    test = ini('test')
+#     testold = ini_v121('testv1') # Erstellt eine XML mit der alten Version
+#     try:
+#         for i in testold.get_all().items():
+#             print(type(i[1]),i)
+#             print(testold.get_ini(i[0]))
+#     except:
+#         pass
+#     testold.add_ini('test',u'Mueller')
+#     testold.add_ini('jash',14.5)
+#     try:
+#         for i in testold.get_all().items():
+#             print(type(i[1]),i)
+#             print(testold.get_ini(i[0]))
+#     except:
+#         pass
+    test = ini('testv1')
     try:
         for i in test.get_all().items():
             print(type(i[1]),i)
